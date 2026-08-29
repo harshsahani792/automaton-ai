@@ -1,0 +1,24 @@
+.env
+.env*
+!.env.example
+__pycache__/
+*.pyc
+deliveries/
+data/download_tokens.json
+data/
+logs/
+workspace/*/test_invoice.pdf
+workspace/create_a_small_ai_powered_text_utility/
+workspace/create_a_simple_social_media_content_tool/
+workspace/create_printable_digital_planners/
+workspace/create_a_niche_calculator_or_business_utility/
+workspace/create_a_simple_invoice_generator_for_small_busine/
+workspace/create_a_simple_ai_text_utility/
+workspace/create-a-simple-ai-text-utility/
+core/*.backup*
+test_invoice_generator.py
+test_webhook_locally.py
+workspace/ai-invoice-generator-for-small-businesses/generated/
+core/*\ *
+workspace/ai-invoice-generator-for-small-businesses/generated/
+core/*\ *
