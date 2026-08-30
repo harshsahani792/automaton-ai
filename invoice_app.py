@@ -7,6 +7,10 @@ from reportlab.pdfgen import canvas
 from datetime import date
 import html
 import uuid
+import os
+import json
+import hmac
+import hashlib
 
 
 HOST = "0.0.0.0"
@@ -374,6 +378,47 @@ class InvoiceHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
+        if self.path == "/webhook":
+            length = int(self.headers.get("Content-Length", "0"))
+            body = self.rfile.read(length)
+
+            secret = os.getenv("PAYMENT_WEBHOOK_SECRET", "")
+            signature = self.headers.get("X-Razorpay-Signature", "")
+
+            if secret:
+                expected = hmac.new(
+                    secret.encode(),
+                    body,
+                    hashlib.sha256
+                ).hexdigest()
+
+                if not hmac.compare_digest(signature, expected):
+                    self.send_response(401)
+                    self.end_headers()
+                    self.wfile.write(b"Invalid signature")
+                    return
+
+            try:
+                payload = json.loads(body.decode("utf-8"))
+                event = payload.get("event", "unknown")
+
+                print("WEBHOOK RECEIVED:", event)
+
+                if event == "payment_link.paid":
+                    print("PAYMENT LINK PAID")
+
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(b"OK")
+
+            except Exception as e:
+                print("WEBHOOK ERROR:", e)
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(str(e).encode())
+
+            return
+
         if self.path != "/generate":
             self.send_response(404)
             self.end_headers()
