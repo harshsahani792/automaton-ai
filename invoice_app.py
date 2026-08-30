@@ -1,5 +1,5 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlparse
 from pathlib import Path
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
@@ -333,7 +333,9 @@ def generate_invoice(data):
 class InvoiceHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        if self.path == "/" or self.path == "/invoice":
+        path = urlparse(self.path).path
+
+        if path == "/" or path == "/invoice":
             page = HTML_FORM.replace(
                 "__TODAY__",
                 str(date.today())
@@ -346,8 +348,8 @@ class InvoiceHandler(BaseHTTPRequestHandler):
             self.wfile.write(page)
             return
 
-        if self.path.startswith("/download/"):
-            filename = self.path.split("/download/", 1)[1]
+        if path.startswith("/download/"):
+            filename = path.split("/download/", 1)[1]
             file = OUTPUT_DIR / Path(filename).name
 
             if not file.is_file():
