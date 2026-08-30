@@ -9,8 +9,8 @@ import html
 import uuid
 
 
-HOST = "127.0.0.1"
-PORT = 8095
+HOST = "0.0.0.0"
+PORT = int(__import__("os").environ.get("PORT", "8095"))
 
 OUTPUT_DIR = Path(
     "workspace/ai-invoice-generator-for-small-businesses/generated"
